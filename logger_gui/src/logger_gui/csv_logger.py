@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from esp32_logger_gui.protocol import DataSample, SensorInfo
+from logger_gui.protocol import DataSample, SensorInfo
 
 
 class CsvLogger:

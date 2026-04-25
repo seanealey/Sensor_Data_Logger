@@ -5,14 +5,14 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from esp32_logger_gui.csv_logger import CsvLogger
-from esp32_logger_gui.protocol import (
+from logger_gui.csv_logger import CsvLogger
+from logger_gui.protocol import (
     SensorInfo,
     build_config_command,
     parse_data_sample
 )
-from esp32_logger_gui.protocol import parse_device_and_sensors
-from esp32_logger_gui.serial_interface import SerialConnection, list_serial_devices
+from logger_gui.protocol import parse_device_and_sensors
+from logger_gui.serial_interface import SerialConnection, list_serial_devices
 
 
 class LoggerApp(tk.Tk):

@@ -1,7 +1,7 @@
 [project]
-name = "esp32-logger-gui"
+name = "logger-gui"
 version = "0.1.0"
-description = "Python GUI for ESP32 serial data logging"
+description = "Python GUI for serial data logging"
 authors = [{ name = "Sean" }]
 requires-python = ">=3.9"
 dependencies = [
@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-logger_gui = "esp32_logger_gui.main:main"
+logger_gui = "logger_gui.main:main"
 
 [tool.ruff]
 line-length = 100

@@ -1,4 +1,4 @@
-from esp32_logger_gui.gui.app import LoggerApp
+from logger_gui.gui.app import LoggerApp
 
 
 def main() -> None:
