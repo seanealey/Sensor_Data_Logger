@@ -12,5 +12,5 @@ public:
     explicit AnalogSensor(const AnalogSensorConfig &cfg);
 
     void begin() override;
-    void sample() override;
+    float sample() override;
 };

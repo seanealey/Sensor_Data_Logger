@@ -9,11 +9,8 @@ void AnalogSensor::begin()
     pinMode(pin, INPUT);
 }
 
-void AnalogSensor::sample()
+float AnalogSensor::sample()
 {
     int value = analogRead(pin);
-
-    Serial.print(name);
-    Serial.print(",");
-    Serial.println(value);
+    return static_cast<float>(value);
 }

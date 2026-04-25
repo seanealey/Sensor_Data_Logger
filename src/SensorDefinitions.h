@@ -3,7 +3,7 @@
 #include <SensorConfigs.h>
 
 static const AnalogSensorConfig analogSensors[] = {
-    {"Potentiometer", 27, 100}
+    {"Potentiometer", 27, 1000}
 
 };
 

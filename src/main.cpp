@@ -1,8 +1,10 @@
 #include <Arduino.h>
 #include <DataLogger.h>
 #include "SensorDefinitions.h"
+#include "SerialHandler.h"
 
-DataLogger logger;
+DataLogger logger("Node1");
+String pcComms; // variable to store incoming serial data for PC communication
 
 void setup()
 {
@@ -18,5 +20,36 @@ void setup()
 
 void loop()
 {
-  logger.update();
+  if (Serial.available() > 0)
+  {
+    String pcComms = Serial.readStringUntil('\n');
+    pcComms.trim();
+
+    if (pcComms.startsWith("HELLO"))
+    {
+      String info = logger.getNodeInfo();
+      Serial.println(info);
+    }
+    else if (pcComms.startsWith("SELECT"))
+    {
+      std::vector<int> selectedIndices = HandleSelectCommand(pcComms);
+
+      // logger.clearTestGroup(); // add this if you want new selection to replace old one
+
+      for (int index : selectedIndices)
+      {
+        logger.addToTestGroup(index);
+      }
+    }
+    else if (pcComms.startsWith("START"))
+    {
+      logger.startTestGroup();
+    }
+    else if (pcComms.startsWith("STOP"))
+    {
+      logger.stopTestGroup();
+    }
+  }
+
+  logger.updateTestGroup();
 }

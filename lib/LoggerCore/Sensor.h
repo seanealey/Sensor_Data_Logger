@@ -8,6 +8,7 @@ protected:
     uint32_t sampleRateHz;
     uint32_t sampleIntervalUs;
     uint32_t lastSampleTimeUs = 0;
+    float sampleValue = 0.0f;
     bool recording = false;
 
 public:
@@ -29,7 +30,7 @@ public:
     virtual ~Sensor() {}
 
     virtual void begin() = 0;
-    virtual void sample() = 0;
+    virtual float sample() = 0;
 
     void startRecording()
     {
@@ -57,18 +58,16 @@ public:
         return sampleRateHz;
     }
 
-    void update()
+    float update()
     {
-        if (!recording)
-        {
-            return;
-        }
 
         uint32_t nowUs = micros();
         if ((uint32_t)(nowUs - lastSampleTimeUs) >= sampleIntervalUs)
         {
             lastSampleTimeUs += sampleIntervalUs;
-            sample();
+            sampleValue = sample();
         }
+
+        return sampleValue;
     }
 };
