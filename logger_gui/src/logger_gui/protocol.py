@@ -69,6 +69,6 @@ def parse_data_sample(line: str) -> list[DataSample] | None:
 
     except ValueError:
         return None
-def build_config_command(sensor_indices: list[int]) -> str:
+def build_select_command(sensor_indices: list[int]) -> str:
     joined = ",".join(str(index) for index in sensor_indices)
     return f"SELECT,{joined}"

@@ -38,6 +38,7 @@ class SerialConnection:
         self._serial: serial.Serial | None = None
         self._reader_thread: threading.Thread | None = None
         self._running = False
+        self._write_lock = threading.Lock()
 
     @property
     def is_connected(self) -> bool:
@@ -47,21 +48,34 @@ class SerialConnection:
         self._serial = serial.Serial(self.port, self.baudrate, timeout=0.1)
         time.sleep(2.0)
 
+        assert self._serial is not None
+        self._serial.reset_input_buffer()
+        self._serial.reset_output_buffer()
+
     def disconnect(self) -> None:
         self.stop_reader()
+
         if self._serial and self._serial.is_open:
             self._serial.close()
+
+        self._serial = None
 
     def write_line(self, line: str) -> None:
         if not self.is_connected:
             raise RuntimeError("Serial device is not connected")
 
         assert self._serial is not None
-        self._serial.write((line.strip() + "\n").encode("utf-8"))
+
+        with self._write_lock:
+            self._serial.write((line.strip() + "\n").encode("utf-8"))
+            self._serial.flush()
 
     def start_reader(self, callback: Callable[[str], None]) -> None:
         if not self.is_connected:
             raise RuntimeError("Serial device is not connected")
+
+        if self._reader_thread and self._reader_thread.is_alive():
+            return
 
         self._running = True
         self._reader_thread = threading.Thread(
@@ -73,8 +87,11 @@ class SerialConnection:
 
     def stop_reader(self) -> None:
         self._running = False
+
         if self._reader_thread and self._reader_thread.is_alive():
             self._reader_thread.join(timeout=1.0)
+
+        self._reader_thread = None
 
     def _read_loop(self, callback: Callable[[str], None]) -> None:
         assert self._serial is not None
@@ -90,5 +107,9 @@ class SerialConnection:
                     callback(line)
 
             except serial.SerialException:
+                self._running = False
+                callback("ERROR,Serial disconnected")
+
+            except OSError:
                 self._running = False
                 callback("ERROR,Serial disconnected")
