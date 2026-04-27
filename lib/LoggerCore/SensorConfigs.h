@@ -8,6 +8,22 @@ struct AnalogSensorConfig
     uint32_t sampleRateHz;
 };
 
+struct DigitalSensorConfig
+{
+    const char *name;
+    int pin;
+    bool pullup; // true for INPUT_PULLUP, false for INPUT
+    uint32_t sampleRateHz;
+};
+
+struct HCSR04SensorConfig
+{
+    const char *name;
+    int echoPin;
+    int triggerPin;
+    uint32_t sampleRateHz;
+};
+
 /*
 struct HX711SensorConfig
 {

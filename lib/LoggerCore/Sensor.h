@@ -58,11 +58,10 @@ public:
         return sampleRateHz;
     }
 
-    float update()
+    float update(uint32_t currentTimeUs, uint32_t lastUpdateTimeUs)
     {
 
-        uint32_t nowUs = micros();
-        if ((uint32_t)(nowUs - lastSampleTimeUs) >= sampleIntervalUs)
+                if ((uint32_t)(currentTimeUs - lastSampleTimeUs) >= sampleIntervalUs)
         {
             lastSampleTimeUs += sampleIntervalUs;
             sampleValue = sample();

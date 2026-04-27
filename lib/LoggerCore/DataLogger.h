@@ -13,6 +13,9 @@ private:
     String name;
     std::vector<std::unique_ptr<Sensor>> sensors;
     std::vector<Sensor *> testGroup;
+    uint32_t TestStartTimeUs = 0;
+    uint32_t LastUpdateTimeUs = 0;
+    uint32_t CurrentTimeUs = 0;
 
 public:
     DataLogger(const String &name);
@@ -20,6 +23,8 @@ public:
     String getNodeInfo() const;
 
     int addSensor(const AnalogSensorConfig &cfg);
+    int addSensor(const DigitalSensorConfig &cfg);
+    int addSensor(const HCSR04SensorConfig &cfg);
     // int addSensor(const HX711SensorConfig &cfg);
 
     Sensor *getSensor(size_t index);
@@ -35,6 +40,7 @@ public:
     void startTestGroup();
     void stopTestGroup();
     void updateTestGroup();
+    void clearTestGroup();
 
     size_t getSensorCount() const;
 };

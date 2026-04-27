@@ -42,34 +42,33 @@ def parse_device_and_sensors(line: str) -> tuple[str, list[SensorInfo]] | None:
 
     return device_name, sensors
 
-def parse_data_sample(line: str) -> DataSample | None:
+def parse_data_sample(line: str) -> list[DataSample] | None:
     if not line.startswith("DATA"):
         return None
 
     parts = [p.strip() for p in line.split(",")]
 
     try:
-        # Format: DATA,3216  (single sensor)
-        if len(parts) == 2:
-            return DataSample(
-                time_ms=0,
-                sensor_index=0,
-                value=float(parts[1]),
+        # Must have at least DATA + time + 1 sensor
+        if len(parts) < 3:
+            return None
+
+        time_ms = int(float(parts[1])/ 1000) 
+
+        samples = []
+        for i, value_str in enumerate(parts[2:]):
+            samples.append(
+                DataSample(
+                    time_ms=time_ms,
+                    sensor_index=i,
+                    value=float(value_str),
+                )
             )
 
-        # Format: DATA,12345,0,3216 (multi-sensor)
-        if len(parts) == 4:
-            return DataSample(
-                time_ms=int(parts[1]),
-                sensor_index=int(parts[2]),
-                value=float(parts[3]),
-            )
+        return samples
 
     except ValueError:
         return None
-
-    return None
-
 def build_config_command(sensor_indices: list[int]) -> str:
     joined = ",".join(str(index) for index in sensor_indices)
     return f"SELECT,{joined}"

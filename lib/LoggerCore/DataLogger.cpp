@@ -1,6 +1,8 @@
 #include "DataLogger.h"
 
 #include <AnalogSensor.h>
+#include <DigitalSensor.h>
+#include <HCSR04Sensor.h>
 
 DataLogger::DataLogger(const String &name) : name(name)
 {
@@ -9,6 +11,22 @@ DataLogger::DataLogger(const String &name) : name(name)
 int DataLogger::addSensor(const AnalogSensorConfig &cfg)
 {
     auto sensor = std::make_unique<AnalogSensor>(cfg);
+    sensor->begin();
+    sensors.push_back(std::move(sensor));
+    return (int)(sensors.size() - 1);
+}
+
+int DataLogger::addSensor(const DigitalSensorConfig &cfg)
+{
+    auto sensor = std::make_unique<DigitalSensor>(cfg);
+    sensor->begin();
+    sensors.push_back(std::move(sensor));
+    return (int)(sensors.size() - 1);
+}
+
+int DataLogger::addSensor(const HCSR04SensorConfig &cfg)
+{
+    auto sensor = std::make_unique<HCSR04Sensor>(cfg);
     sensor->begin();
     sensors.push_back(std::move(sensor));
     return (int)(sensors.size() - 1);
@@ -86,7 +104,7 @@ void DataLogger::update()
 {
     for (auto &sensor : sensors)
     {
-        sensor->update();
+        sensor->update(CurrentTimeUs, LastUpdateTimeUs);
     }
 }
 
@@ -116,6 +134,8 @@ Sensor *DataLogger::getSensor(size_t index)
 
 void DataLogger::startTestGroup()
 {
+    TestStartTimeUs = micros();
+    LastUpdateTimeUs = 0;
     for (auto &sensor : testGroup)
     {
         sensor->startRecording();
@@ -127,24 +147,29 @@ void DataLogger::stopTestGroup()
     for (auto &sensor : testGroup)
     {
         sensor->stopRecording();
+        testGroup.clear(); // Clear the test group after stopping
     }
 }
 
 void DataLogger::updateTestGroup()
 {
+    CurrentTimeUs = micros() - TestStartTimeUs;
     std::vector<float> samples;
+    samples.push_back((float)CurrentTimeUs);
+
     for (auto &sensor : testGroup)
     {
         if (sensor->isRecording())
         {
-            float sampleValue = sensor->update();
+            float sampleValue = sensor->update(CurrentTimeUs, LastUpdateTimeUs);
             samples.push_back(sampleValue);
         }
     }
 
-    if (!samples.empty())
+    if (!samples.empty() && samples.size() > 1) // Ensure we have at least one sensor sample to send
     {
         Serial.print("DATA");
+
         for (float sample : samples)
         {
             Serial.print(",");
@@ -152,6 +177,12 @@ void DataLogger::updateTestGroup()
         }
         Serial.println();
     }
+}
+
+void DataLogger::clearTestGroup()
+{
+    testGroup.clear();
+    Serial.println("Test group cleared");
 }
 
 size_t DataLogger::getSensorCount() const

@@ -3,7 +3,7 @@
 #include "SensorDefinitions.h"
 #include "SerialHandler.h"
 
-DataLogger logger("Node1");
+DataLogger logger("Testbed-1");
 String pcComms; // variable to store incoming serial data for PC communication
 
 void setup()
@@ -13,6 +13,14 @@ void setup()
   for (size_t i = 0; i < analogSensorCount; i++)
   {
     logger.addSensor(analogSensors[i]);
+  }
+  for (size_t i = 0; i < digitalSensorCount; i++)
+  {
+    logger.addSensor(digitalSensors[i]);
+  }
+  for (size_t i = 0; i < hcsr04SensorCount; i++)
+  {
+    logger.addSensor(hcsr04Sensors[i]);
   }
 
   logger.startAll();
@@ -34,7 +42,7 @@ void loop()
     {
       std::vector<int> selectedIndices = HandleSelectCommand(pcComms);
 
-      // logger.clearTestGroup(); // add this if you want new selection to replace old one
+      logger.clearTestGroup(); // add this if you want new selection to replace old one
 
       for (int index : selectedIndices)
       {
@@ -48,6 +56,18 @@ void loop()
     else if (pcComms.startsWith("STOP"))
     {
       logger.stopTestGroup();
+    }
+    else if (pcComms.startsWith("PAUSE"))
+    {
+      logger.stopTestGroup();
+    }
+    else if (pcComms.startsWith("RESUME"))
+    {
+      logger.updateTestGroup();
+    }
+    else
+    {
+      Serial.println("Unknown command");
     }
   }
 
