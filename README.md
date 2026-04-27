@@ -9,10 +9,7 @@ then run logger_gui command to open the gui
 
 TODO:
 
-test multi sensors on one board
 expand support for multiple boards at a time
-get timestamp from device instead of pc
 add csv folder
-fix pause option
 fix timer option
 add pause function to esp

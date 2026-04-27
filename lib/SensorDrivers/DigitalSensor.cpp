@@ -2,12 +2,12 @@
 #include <Arduino.h>
 
 DigitalSensor::DigitalSensor(const DigitalSensorConfig &cfg)
-    : Sensor(cfg.name, cfg.sampleRateHz), pin(cfg.pin), pullup(cfg.pullup) {}
+    : Sensor(cfg.name, cfg.sampleRateHz), pin(cfg.pin), pulldown(cfg.pulldown) {}
 
 void DigitalSensor::begin()
 {
     pinMode(pin, INPUT);
-    if (pullup)
+    if (pulldown)
     {
         pinMode(pin, INPUT_PULLDOWN);
     }

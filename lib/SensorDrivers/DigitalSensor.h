@@ -7,7 +7,7 @@ class DigitalSensor : public Sensor
 {
 private:
     int pin;
-    bool pullup;
+    bool pulldown;
 
 public:
     explicit DigitalSensor(const DigitalSensorConfig &cfg);

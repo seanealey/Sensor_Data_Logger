@@ -19,7 +19,7 @@ class LoggerApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
 
-        self.title("ESP32 Logger GUI")
+        self.title("Logger GUI")
         self.geometry("850x560")
 
         self.connection: SerialConnection | None = None

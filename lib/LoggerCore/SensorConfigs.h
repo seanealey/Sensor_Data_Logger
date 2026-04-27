@@ -12,7 +12,7 @@ struct DigitalSensorConfig
 {
     const char *name;
     int pin;
-    bool pullup; // true for INPUT_PULLUP, false for INPUT
+    bool pulldown; // true for INPUT_PULLDOWN, false for INPUT
     uint32_t sampleRateHz;
 };
 
