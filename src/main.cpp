@@ -3,7 +3,7 @@
 #include "SensorDefinitions.h"
 #include "SerialHandler.h"
 
-DataLogger logger("Testbed-1");
+DataLogger logger("Testbed-2");
 String pcComms; // variable to store incoming serial data for PC communication
 
 void setup()
